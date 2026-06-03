@@ -12,6 +12,7 @@ import {
   CheckCircle,
 } from "lucide-react";
 import toast from "react-hot-toast";
+import AchievementBadge from "../../components/AchievementBadge";
 
 import axiosInstance from "../../utils/axiosinstance";
 import { API_PATHS } from "../../utils/apiPaths";
@@ -130,6 +131,70 @@ const ProgressTrackerDashboard = () => {
   const [resumes, setResumes] = useState([]);
   const [sheetProgress, setSheetProgress] = useState([]);
 
+  const achievements = [
+  {
+    title: "First Interview",
+    description: "Create your first mock interview session",
+    unlocked: sessions.length >= 1,
+  },
+  {
+    title: "Interview Pro",
+    description: "Complete 5 interview sessions",
+    unlocked: sessions.length >= 5,
+  },
+  {
+    title: "Interview Master",
+    description: "Complete 10 interview sessions",
+    unlocked: sessions.length >= 10,
+  },
+  {
+    title: "Resume Builder",
+    description: "Create your first resume",
+    unlocked: resumes.length >= 1,
+  },
+  {
+    title: "Resume Expert",
+    description: "Create 3 resumes",
+    unlocked: resumes.length >= 3,
+  },
+  {
+    title: "DSA Beginner",
+    description: "Reach 50% progress in any sheet",
+    unlocked: sheetProgress.some(
+      (sheet) => sheet.percentage >= 50
+    ),
+  },
+  {
+    title: "DSA Master",
+    description: "Reach 100% progress in any sheet",
+    unlocked: sheetProgress.some(
+      (sheet) => sheet.percentage >= 100
+    ),
+  },
+];
+
+useEffect(() => {
+  if (loading) return;
+
+  const storageKey = "toasted_badges";
+  const already = JSON.parse(localStorage.getItem(storageKey) || "[]");
+  const alreadySet = new Set(already);
+
+  const newlyUnlocked = achievements.filter(
+    (b) => b.unlocked && !alreadySet.has(b.title)
+  );
+
+  newlyUnlocked.forEach((badge) => {
+    toast.success(`🏆 Badge unlocked: ${badge.title}!`);
+    alreadySet.add(badge.title);
+  });
+
+  if (newlyUnlocked.length > 0) {
+    localStorage.setItem(storageKey, JSON.stringify([...alreadySet]));
+  }
+}, [loading, achievements]);
+
+
   useEffect(() => {
     const fetchDashboardData = async () => {
       setLoading(true);
@@ -245,6 +310,32 @@ const ProgressTrackerDashboard = () => {
             gradientClass="bg-white dark:bg-black/20"
           />
         </div>
+        
+        {/* ACHIEVEMENTS */}
+        <div>
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-xl font-bold"> 🏆 Achievements </h2>
+          <span className="text-sm text-gray-500">
+            {
+            achievements.filter(
+          (badge) => badge.unlocked
+        ).length
+        }{" "}
+        / {achievements.length} unlocked
+        </span>
+        </div>
+        
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {achievements.map((badge) => (
+            <AchievementBadge
+            key={badge.title}
+            title={badge.title}
+            description={badge.description}
+            unlocked={badge.unlocked}
+            />
+            ))}
+            </div>
+            </div>
 
         {/* MAIN CONTENT SPLIT */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
