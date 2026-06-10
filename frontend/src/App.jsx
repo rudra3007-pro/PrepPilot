@@ -13,7 +13,7 @@ import ErrorBoundary from "./components/ErrorBoundary";
 
 import Login from "./pages/Auth/Login";
 import SignUp from "./pages/Auth/SignUp";
-import VerifyEmail from "./pages/Auth/VerifyEmail";
+import VerifyEmail from "./pages/Auth/verifyEmail";
 import LandingPage from "./LandingPage";
 import Dashboard from "./pages/Home/Dashboard";
 import ProgressTrackerDashboard from "./pages/Home/ProgressTrackerDashboard";
