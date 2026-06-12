@@ -67,10 +67,12 @@ const SignUp = ({ setCurrentPage }) => {
       });
 
       if (response.data.success) {
-        setSuccessMessage(response.data.message);
-        setFullName("");
-        setPassword("");
-        setProfilePic(null);
+        const { token } = response.data;
+        if (token) {
+          sessionStorage.setItem("token", token);
+          updateUser(response.data);
+          navigate("/dashboard");
+        }
       }
     } catch (error) {
       if (error.response && error.response.data.message) {
